@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    >
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/his_image"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="8dp"
+        android:elevation="10dp"
+        android:src="@drawable/profile" />
+<RelativeLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/background_his_message"
+    android:layout_toEndOf="@id/his_image"
+    android:layout_centerVertical="true"
+    android:layout_marginEnd="80dp"
+    android:layout_marginStart="8dp"
+    android:layout_marginBottom="8dp"
+    android:layout_marginTop="16dp"
+    android:padding="8dp"
+    >
+
+    <ImageView
+        android:id="@+id/play_his"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/play_him"
+        android:layout_centerVertical="true"
+
+        />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_centerVertical="true"
+        android:layout_toEndOf="@id/play_his"
+        android:background="#202020"
+        />
+
+    <Chronometer
+        android:id="@+id/his_voice_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#202020"
+        android:layout_alignParentEnd="true"
+        android:paddingEnd="16dp"
+        android:paddingStart="16dp"
+        android:background="@drawable/background_his_message"
+        />
+</RelativeLayout>
+</RelativeLayout>
