@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         messages.add(new message("this is a demo message from me i'm the programmer ho made this fucking app !999",false,0,true,0) );
         messages.add(new message("",true,R.drawable.ziad,false,14) );
         messages.add(new message("",false,0,false,25) );
-        messages.add(new message("",false,0,false,03) );
+        messages.add(new message("",false,0,false,3) );
         messages.add(new message("",true,R.drawable.shawky,false,53) );
         messages.add(new message("this is a demo message from me i'm the programmer ho made this fucking app !1414",false,0,true,0) );
         messages.add(new message("this is a demo message from me i'm the programmer ho made this fucking app !1515",false,0,true,0) );
