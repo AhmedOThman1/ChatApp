@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
 
         messages.clear();
         messages.add(new message("this is a demo message from me i'm the programmer ho made this fucking app !111",false,0,true,0) );
-        messages.add(new message("",true,R.drawable.profile,false,40) );
+        messages.add(new message("",true,R.drawable.profile,false,43) );
         messages.add(new message("this message from me !333",false,0,true,0) );
         messages.add(new message("this is a  message from me i'm the programmer ho made this  app !444",true,R.drawable.osman,true,0) );
         messages.add(new message("this message from me !555",false,0,true,0) );
