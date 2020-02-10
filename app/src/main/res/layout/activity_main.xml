@@ -5,9 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
-    android:background="#EEEEEE">
+    android:background="@color/chat_background">
 
-    <include layout="@layout/message_custom_actionbar"/>
+    <include layout="@layout/message_custom_actionbar" />
 
     <ListView
         android:id="@+id/list"
@@ -16,27 +16,32 @@
         android:layout_below="@id/toolbar"
         android:layout_above="@id/outer_container"
         android:divider="@android:color/transparent"
+        android:dividerHeight="8dp"
+        android:scrollbars="none"
         />
     <LinearLayout
         android:id="@+id/outer_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="#FFF"
+        android:background="@color/chat_background"
         android:weightSum="10"
         android:paddingBottom="8dp"
-        android:paddingTop="8dp">
+        android:paddingTop="8dp"
+        android:elevation="10dp"
+        >
 
 
 
         <ImageView
-            android:id="@+id/more"
+            android:id="@+id/hide"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="4dp"
             android:layout_weight="1"
-            android:src="@drawable/more"
+            android:src="@drawable/show_hide"
             android:layout_gravity="center"
+            android:visibility="gone"
             />
 
         <ImageView
@@ -74,8 +79,7 @@
             android:id="@+id/inner_container"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_weight="5"
+            android:layout_weight="6"
             android:background="@drawable/background_message"
             android:weightSum="9"
             android:layout_marginStart="4dp"
@@ -91,10 +95,10 @@
                 android:layout_marginEnd="4dp"
                 android:layout_marginStart="8dp"
                 android:layout_weight="8"
-                android:hint="Message..."
+                android:hint="Aa"
                 android:inputType="textMultiLine"
                 android:scrollHorizontally="false"
-                android:background="#FFF"
+                android:background="@color/new_message_background"
                 />
 
             <ImageView

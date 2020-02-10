@@ -26,7 +26,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginBottom="8dp"
         android:textSize="18dp"
-        android:textColor="#000"
+        android:textColor="@color/message_text"
         android:text="this is a demo message from me i'm the programmer ho made this fucking app !"
         android:padding="8dp"
         />

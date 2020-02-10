@@ -4,8 +4,8 @@
     android:layout_height="?attr/actionBarSize"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/toolbar"
-    android:background="@color/colorPrimary"
-    android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+    android:background="@color/chat_background"
+    android:elevation="10dp"
     tools:menu="@menu/messages_menu"
 
     >
@@ -32,9 +32,11 @@
             android:layout_toEndOf="@id/profile_image"
             android:text="account name"
             android:textSize="18dp"
-            android:textColor="#FFF"/>
+            android:textColor="@color/message_text"
+            />
 
         <TextView
+            android:id="@+id/last_seen"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/acc_name"
@@ -43,6 +45,7 @@
             android:layout_toEndOf="@id/profile_image"
             android:text="Last seen"
             android:textSize="13dp"
-            android:textColor="#FFF"/>
+            android:textColor="@color/message_text"
+            />
     </RelativeLayout>
 </androidx.appcompat.widget.Toolbar>

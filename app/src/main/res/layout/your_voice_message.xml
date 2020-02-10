@@ -1,18 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="match_parent"
+
     >
 <RelativeLayout
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:background="@drawable/background_your_message"
-    android:layout_alignParentEnd="true"
-    android:layout_marginStart="100dp"
     android:layout_marginEnd="8dp"
     android:layout_marginBottom="8dp"
+    android:layout_alignParentEnd="true"
     android:padding="8dp"
     >
+
+    <Chronometer
+        android:id="@+id/your_voice_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/chat_color"
+        android:paddingEnd="16dp"
+        android:paddingStart="16dp"
+        android:layout_toEndOf="@id/voice_progress_your"
+        android:background="@drawable/background_his_message"
+        />
     <ImageView
         android:id="@+id/play_your"
         android:layout_width="wrap_content"
@@ -21,24 +32,20 @@
         android:layout_centerVertical="true"
 
         />
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_centerVertical="true"
-        android:layout_toEndOf="@id/play_your"
-        android:background="#FFF"
-        />
 
-    <Chronometer
-        android:id="@+id/your_voice_time"
+    <ProgressBar
+
+        android:id="@+id/voice_progress_your"
+        style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="0:59"
-        android:textColor="@color/colorPrimary"
-        android:layout_alignParentEnd="true"
-        android:paddingEnd="16dp"
-        android:paddingStart="16dp"
-        android:background="@drawable/background_his_message"
+        android:layout_centerVertical="true"
+        android:layout_toEndOf="@id/play_your"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:indeterminate="true"
+        android:indeterminateTintMode="src_atop"
+        android:indeterminateTint="@color/chat_background"
         />
 </RelativeLayout>
 </RelativeLayout>

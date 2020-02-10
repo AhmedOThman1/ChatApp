@@ -5,19 +5,19 @@
 
     <item
         android:id="@+id/video_call"
-        android:icon="@drawable/videocall"
+        android:icon="@drawable/start_voice_call"
         android:title="Video call"
         app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/voice_call"
-        android:icon="@drawable/call"
+        android:icon="@drawable/start_video_call"
         android:title="Video call"
         app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/more_menu"
-        android:icon="@drawable/more_menu"
+        android:icon="@drawable/info_circle"
         android:title="Video call"
         app:showAsAction="ifRoom"/>
 </menu>

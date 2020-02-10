@@ -9,6 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Chronometer;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -20,9 +24,13 @@ import static com.example.chatapp.MainActivity.messages;
 public class MessageAdapter extends ArrayAdapter<message> {
 
     private Activity activity;
-
-    int mPosition;
+    int prPos = -1;
     message currentmessage;
+    TextView your_message, his_message;
+    Chronometer your_voice_time, his_voice_time;
+    ImageView his_image, play_his, play_your;
+    ProgressBar your_prog, his_prog;
+
     public MessageAdapter(Activity context, List<message> messages) {
         // Here, we initialize the ArrayAdapter's internal storage for the context and the list.
         // the second argument is used when the ArrayAdapter is populating a single TextView.
@@ -53,275 +61,177 @@ public class MessageAdapter extends ArrayAdapter<message> {
 //    }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         // Check if the existing view is being reused, otherwise inflate the view
+        currentmessage = getItem(position);
 
-        mPosition = position;
-        View listItemViewm1 = null, listItemViewm2= null ,listItemViewv1 = null, listItemViewv2= null , listItemView;
-        final messageViewHolder messageHolder;
-
-
-
-        currentmessage = getItem(mPosition);
-        Toast.makeText(activity, "before if : "+position, Toast.LENGTH_SHORT).show();
-
+        View view = convertView;
         if (convertView == null) {
-
-            /*
-            listItemView = LayoutInflater.from(getContext()).inflate(
-                    R.layout.post, parent, false);
-            */
-
-            // TODO add menu in every post
-            // TODO add dropback and report this post as duplicate and so on
-
             LayoutInflater layoutInflater = (LayoutInflater) getContext().getSystemService(getContext().LAYOUT_INFLATER_SERVICE);
 
-            listItemViewm1 = layoutInflater.inflate(R.layout.your_message_design, parent, false);
-            listItemViewm2 = layoutInflater.inflate(R.layout.his_message_design, parent, false);
-            listItemViewv1 = layoutInflater.inflate(R.layout.your_voice_message, parent, false);
-            listItemViewv2 = layoutInflater.inflate(R.layout.his_voice_message, parent, false);
-
-
-
-            messageHolder = new messageViewHolder();
-            messageHolder.his_image = listItemViewm2.findViewById(R.id.his_image);
-            messageHolder.his_message = listItemViewm2.findViewById(R.id.his_message);
-
-            messageHolder.his_voice_time = listItemViewv2.findViewById(R.id.his_voice_time);
-            messageHolder.play_his = listItemViewv2.findViewById(R.id.play_his);
-
-            messageHolder.your_message = listItemViewm1.findViewById(R.id.your_message);
-
-            messageHolder.your_voice_time = listItemViewv1.findViewById(R.id.your_voice_time);
-            messageHolder.play_your = listItemViewv1.findViewById(R.id.play_your);
-
-           // currentmessage = getItem(mPosition);
-
-            Toast.makeText(activity, "inside if : "+position, Toast.LENGTH_SHORT).show();
-            if(!currentmessage.isMeORyou())
-            {
-                if(currentmessage.isVoiceORtext())
-                {
+            if (currentmessage.isMe_or_him()) {
+                if (currentmessage.getMessage_type().equals("text")) {
                     // Me , Text
-                    listItemViewm1.setTag(messageHolder);
+                    view = layoutInflater.inflate(R.layout.your_message_design, parent, false);
+
+                } else if (currentmessage.getMessage_type().equals("voice")) {
+                    // me  ,  voice
+                    view = layoutInflater.inflate(R.layout.your_voice_message, parent, false);
 
                 }
-                else
-                {
-                    // me  ,  voice
-                    listItemViewv1.setTag(messageHolder);
 
+            } else {
+                if (currentmessage.getMessage_type().equals("text")) {
+                    // him , Text
+                    view = layoutInflater.inflate(R.layout.his_message_design, parent, false);
+                } else {
+                    //him , voice
+                    view = layoutInflater.inflate(R.layout.his_voice_message, parent, false);
                 }
             }
-            else
-            {
-                if(currentmessage.isVoiceORtext())
-                {
-                    // him , Text
-                    listItemViewm2.setTag(messageHolder);
+        }
 
-                }
-                else
-                {
-                    //him , voice
-                    listItemViewv2.setTag(messageHolder);
 
-                }
+        if (currentmessage.isMe_or_him()) {
+            if (currentmessage.getMessage_type().equals("text")) {
+                // Me , Text
+
+                your_message = view.findViewById(R.id.your_message);
+
+                your_message.setText(currentmessage.getMessage_text());
+
+            } else if (currentmessage.getMessage_type().equals("voice")) {
+                // me  ,  voice
+                your_voice_time = view.findViewById(R.id.your_voice_time);
+                play_your = view.findViewById(R.id.play_your);
+                your_prog = view.findViewById(R.id.voice_progress_your);
+
+
+                your_prog.setMax(currentmessage.getVoice_time() / 1000);
+                your_voice_time.setText("00:" + (currentmessage.getVoice_time() / 1000));
+                play_your.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        if (!currentmessage.isVoice_message_running()) {
+
+                            your_voice_time.setBase(SystemClock.elapsedRealtime() - currentmessage.getBaseoffset());
+                            your_voice_time.start();
+                            currentmessage.setVoice_message_running(true);
+                            play_your.setImageResource(R.drawable.pause_yours);
+
+                        } else {
+                            your_voice_time.stop();
+                            currentmessage.setBaseoffset(SystemClock.elapsedRealtime() - your_voice_time.getBase());
+                            currentmessage.setVoice_message_running(false);
+                            play_your.setImageResource(R.drawable.play_yours);
+                        }
+
+                    }
+                });
+
+                your_voice_time.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
+                    @Override
+                    public void onChronometerTick(Chronometer chronometer) {
+                        int time = currentmessage.getVoice_time(),
+                                currentTime = (int) ((SystemClock.elapsedRealtime() - chronometer.getBase()) / 1000);
+
+                        your_prog.setProgress(currentTime);
+
+                        if (time > 0 && (SystemClock.elapsedRealtime() - chronometer.getBase()) >= time) {
+                            Log.i("test", "" + SystemClock.elapsedRealtime() + "   ,  time :     " + time + "      ,    f  =   " + (SystemClock.elapsedRealtime() - chronometer.getBase()));
+                            chronometer.setBase(SystemClock.elapsedRealtime());
+                            your_voice_time.stop();
+                            currentmessage.setVoice_message_running(false);
+                            play_your.setImageResource(R.drawable.play_yours);
+                            your_voice_time.setText("00:" + (currentmessage.getVoice_time() / 1000));
+
+                        }
+                    }
+                });
+
+
+            } else if (currentmessage.getMessage_type().equals("photo")) {
+                //TODO photo here
             }
 
         } else {
-
-
-
-            if(!currentmessage.isMeORyou())
-            {
-                if(currentmessage.isVoiceORtext())
-                {
-                    // Me , Text
-                    listItemViewm1 = convertView;
-                    messageHolder = (messageViewHolder) listItemViewm1.getTag();
-
-
-                }
-                else
-                {
-                    // me  ,  voice
-                    listItemViewv1 = convertView;
-                    messageHolder = (messageViewHolder) listItemViewv1.getTag();
-
-
-                }
-            }
-            else
-            {
-                if(currentmessage.isVoiceORtext())
-                {
-                    // him , Text
-                    listItemViewm2 = convertView;
-                    messageHolder = (messageViewHolder) listItemViewm2.getTag();
-
-
-                }
-                else
-                {
-                    //him , voice
-                    listItemViewv2 = convertView;
-                    messageHolder = (messageViewHolder) listItemViewv2.getTag();
-
-                }
-            }
-
-
-
-        }
-        Toast.makeText(activity, "outer if : "+position, Toast.LENGTH_SHORT).show();
-        if(!currentmessage.isMeORyou())
-        {
-            if(currentmessage.isVoiceORtext())
-            {
-                // Me , Text
-                messageHolder.your_message.setText(currentmessage.getMessage_text());
-            }
-            else
-            {
-                // me  ,  voice
-                messageHolder.your_voice_time.setText("00:"+(currentmessage.getvoice_time()/1000));
-                messageHolder.play_your.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        if(!currentmessage.voice_message_running)
-                        {
-                            messageHolder.your_voice_time.setBase(SystemClock.elapsedRealtime() - currentmessage.getBaseoffset());
-                            messageHolder.your_voice_time.start();
-                            currentmessage.voice_message_running = true;
-                            messageHolder.play_your.setImageResource( R.drawable.pause_yours );
-                        }
-                        else
-                        {
-                            messageHolder.your_voice_time.stop();
-                            currentmessage.setBaseoffset(SystemClock.elapsedRealtime() - messageHolder.your_voice_time.getBase());
-                            currentmessage.voice_message_running = false;
-                            messageHolder.play_your.setImageResource( R.drawable.play_yours );
-                        }
-
-                    }
-                });
-
-                messageHolder.your_voice_time.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
-                    @Override
-                    public void onChronometerTick(Chronometer chronometer) {
-                        int time = currentmessage.getvoice_time();
-                        if(time>0&&(SystemClock.elapsedRealtime() - chronometer.getBase())>=time)
-                        {
-                            Log.i("test",""+SystemClock.elapsedRealtime() +"   ,  time :     "+ time + "      ,    f  =   "+(SystemClock.elapsedRealtime() - chronometer.getBase()));
-                            chronometer.setBase(SystemClock.elapsedRealtime());
-                            messageHolder.your_voice_time.stop();
-                            currentmessage.voice_message_running = false;
-                            messageHolder.play_your.setImageResource( R.drawable.play_yours );
-                            messageHolder.your_voice_time.setText("00:"+(currentmessage.getvoice_time()/1000) );
-
-                        }
-                    }
-                });
-
-
-            }
-        }
-        else
-        {
-            if(currentmessage.isVoiceORtext())
-            {
+            if (currentmessage.getMessage_type().equals("text")) {
                 // him , Text
-                messageHolder.his_message.setText(currentmessage.getMessage_text());
-                messageHolder.his_image.setImageResource(currentmessage.getMessage_photo());
+                his_image = view.findViewById(R.id.his_image);
+                his_message = view.findViewById(R.id.his_message);
 
-            }
-            else
-            {
+
+                his_message.setText(currentmessage.getMessage_text());
+                his_image.setImageResource(currentmessage.getHis_profile_img());
+
+            } else if (currentmessage.getMessage_type().equals("voice")) {
                 //him , voice
-                messageHolder.his_voice_time.setText("00:"+ ( currentmessage.getvoice_time()/1000) );
-                messageHolder.his_image.setImageResource(currentmessage.getMessage_photo());
-                messageHolder.play_his.setOnClickListener(new View.OnClickListener() {
+                his_voice_time = view.findViewById(R.id.his_voice_time);
+                play_his = view.findViewById(R.id.play_his);
+                his_prog = view.findViewById(R.id.voice_progress_his);
+                his_image = view.findViewById(R.id.his_image);
+
+
+                his_prog.setMax(currentmessage.getVoice_time() / 1000);
+                his_voice_time.setText("00:" + (currentmessage.getVoice_time() / 1000));
+                his_image.setImageResource(currentmessage.getHis_profile_img());
+                play_his.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
 
-                        if(!currentmessage.voice_message_running)
-                        {
+                        if (!currentmessage.isVoice_message_running()) {
                             Toast.makeText(activity, "Test", Toast.LENGTH_SHORT).show();
-                            messageHolder.his_voice_time.setBase(SystemClock.elapsedRealtime() - currentmessage.getBaseoffset());
-                            messageHolder.his_voice_time.start();
-                            currentmessage.voice_message_running = true;
-                            messageHolder.play_his.setImageResource( R.drawable.pause_him );
-                        }
-                        else
-                        {
-                            messageHolder.his_voice_time.stop();
-                            currentmessage.setBaseoffset(SystemClock.elapsedRealtime() - messageHolder.his_voice_time.getBase());
-                            currentmessage.voice_message_running = false;
-                            messageHolder.play_his.setImageResource( R.drawable.play_him );
+                            his_voice_time.setBase(SystemClock.elapsedRealtime() - currentmessage.getBaseoffset());
+                            his_voice_time.start();
+                            currentmessage.setVoice_message_running(true);
+                            play_his.setImageResource(R.drawable.pause_him);
+                        } else {
+                            his_voice_time.stop();
+                            currentmessage.setBaseoffset(SystemClock.elapsedRealtime() - his_voice_time.getBase());
+                            currentmessage.setVoice_message_running(false);
+                            play_his.setImageResource(R.drawable.play_him);
                         }
 
                     }
                 });
 
-                messageHolder.his_voice_time.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
+                his_voice_time.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
                     @Override
                     public void onChronometerTick(Chronometer chronometer) {
-                        final int time = 23000;
-                        if((SystemClock.elapsedRealtime() - chronometer.getBase()) >= time)
-                        {
+                        int time = currentmessage.getVoice_time(),
+                                currentTime = (int) ((SystemClock.elapsedRealtime() - chronometer.getBase()) / 1000);
+
+                        his_prog.setProgress(currentTime);
+
+                        if (time > 0 && (SystemClock.elapsedRealtime() - chronometer.getBase()) >= time) {
+                            Log.i("test", "" + SystemClock.elapsedRealtime() + "   ,  time2 :     " + time + "      ,    f2  =   " + (SystemClock.elapsedRealtime() - chronometer.getBase()));
                             chronometer.setBase(SystemClock.elapsedRealtime());
-                            messageHolder.his_voice_time.stop();
-                            currentmessage.voice_message_running = false;
-                            messageHolder.play_his.setImageResource( R.drawable.play_him );
-                            messageHolder.his_voice_time.setText("00:"+ ( currentmessage.getvoice_time()/1000)  );
+                            his_voice_time.stop();
+                            currentmessage.setVoice_message_running(false);
+                            play_his.setImageResource(R.drawable.play_him);
+                            his_voice_time.setText("00:" + (currentmessage.getVoice_time() / 1000));
 
                         }
                     }
                 });
 
 
-
+            } else if (currentmessage.getMessage_type().equals("photo")) {
+                //TODO photo here
             }
         }
+
 
         // Toast.makeText(activity, "poo "+ mPosition, Toast.LENGTH_SHORT).show();
-       // postViewHolder.vProfile_image.setImageResource(currentPost.getProfile_image());
+        // postViewHolder.vProfile_image.setImageResource(currentPost.getProfile_image());
 
         // Return the whole list item layout (containing 2 TextViews and an ImageView)
         // so that it can be shown in the ListView
-        if(!currentmessage.isMeORyou())
-        {
-            if(currentmessage.isVoiceORtext())
-            {
-                // Me , Text
-                return listItemViewm1;
 
-            }
-            else
-            {
-                // me  ,  voice
-                return listItemViewv1;
 
-            }
-        }
-        else
-        {
-            if(currentmessage.isVoiceORtext())
-            {
-                // him , Text
-                return listItemViewm2;
 
-            }
-            else
-            {
-                //him , voice
-                return listItemViewv2;
-            }
-        }
-
+        return view;
     }
 
 }
